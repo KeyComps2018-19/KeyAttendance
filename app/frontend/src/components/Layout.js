@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
+import { withCredentials } from './Helpers';
 
 class Layout extends Component {
 
@@ -16,7 +17,14 @@ class Layout extends Component {
     this.props.history.push(`/${name}`);
   }
 
+  logout = () => () => {
+    window.localStorage.removeItem("key_credentials");
+    this.props.updateToken('');
+    this.props.history.push(`/`)
+  }
+
   render() {
+    if (!this.props.show) { return this.props.children }
     return (
       <div>
         <Navbar>
@@ -35,7 +43,7 @@ class Layout extends Component {
                   <NavItem onClick={this.handleItemClick('admin')}>Admin</NavItem>
               </Nav>
               <Nav pullRight>
-                <NavItem>Logout</NavItem>
+                <NavItem onClick={this.logout()}>Logout</NavItem>
               </Nav>
             </Navbar.Collapse>
         </Navbar>
@@ -51,4 +59,4 @@ Layout.propTypes = {
   }),
 };
 
-export default withRouter(Layout);
+export default withRouter(withCredentials(Layout));

@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import "./Autocomplete.css"
-import { Form, FormGroup, FormControl, Button, ControlLabel } from "react-bootstrap";
+import { Form, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 
 class Autocomplete extends Component {
   static propTypes = {
@@ -214,7 +214,6 @@ class Autocomplete extends Component {
             />
             {suggestionsListComponent}
           </FormGroup>{' '}
-          {/* <Button type="submit">Search</Button> */}
         </Form>
       </Fragment>
     );

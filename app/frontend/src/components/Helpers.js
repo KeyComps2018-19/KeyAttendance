@@ -1,3 +1,7 @@
+import { CredentialsContext } from './CredentialsContext';
+import React from 'react';
+import { Redirect } from 'react-router-dom';
+
 // Store helper functions that we'll probably re-use here!
 
 function httpPost(url, body={}, headers={'Content-Type':'application/json'}) {
@@ -140,4 +144,30 @@ async function downloadAttendanceCSV(startDate, endDate=null) {
 	document.body.removeChild(element);
 }
 
-export { downloadAttendanceCSV, compareActivities, httpPost, httpGet, httpDelete }
+// Makes sure that we have a token, else redirects to login screen
+const checkCredentials = (Component) => {
+	return (
+		<CredentialsContext.Consumer>
+            {({token, updateToken}) => {
+				if (token === '') {
+					return <Redirect to='/'/>
+				} else {
+					return <Component/>;
+				}
+			}}
+        </CredentialsContext.Consumer>
+	);
+}
+
+// Directly gives a component access to credentials via props
+const withCredentials = (Component) => {
+	return (props) => (
+		<CredentialsContext.Consumer>
+			{({token, updateToken}) => {
+				return <Component {...props} token={token} updateToken={updateToken}/>
+			}}
+		</CredentialsContext.Consumer>
+	)
+}
+
+export { downloadAttendanceCSV, compareActivities, httpPost, httpGet, httpDelete, checkCredentials, withCredentials }

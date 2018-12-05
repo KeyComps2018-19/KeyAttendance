@@ -35,7 +35,7 @@ class AttendanceOptions extends React.Component {
 
         // figure out what to delete
         for (let i = 0; i < keys.length; i++) {
-            if (activities[keys[i]].attendanceItemID != 0) {
+            if (activities[keys[i]].attendanceItemID !== 0) {
                 ids.push(activities[keys[i]].attendanceItemID)
             }
         }
