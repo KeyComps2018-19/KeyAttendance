@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Students, AttendanceItems, Activity
+from .models import Students, AttendanceItems, Activity, Users
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,3 +32,10 @@ class ActivitySerializer(serializers.ModelSerializer):
             'activity_id'
         )
         model = Activity
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = (
+            'username',
+        )
+        model = Users

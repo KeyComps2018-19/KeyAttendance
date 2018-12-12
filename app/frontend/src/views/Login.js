@@ -27,8 +27,13 @@ class Login extends React.Component {
     }
     
     submit(updateFunction) {
+        // Submit username and password to backend
+
+        // If we get a positive response, call updateFunction on the token we got
         updateFunction('yeet');
         this.props.history.push(`/attendance`);
+
+        // If we get a negative response, display some sort of error and wipe the fields.
     }
 
     render() {
@@ -38,7 +43,6 @@ class Login extends React.Component {
             <CredentialsContext.Consumer>
                 {({token, updateToken}) => {
                     if (token !== '') {
-                        // TODO: Check if the token is still valid.
                         return (<Redirect to='/attendance'/>);
                     } else {
                         return (

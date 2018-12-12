@@ -4,6 +4,8 @@ import { Redirect } from 'react-router-dom';
 
 // Store helper functions that we'll probably re-use here!
 
+// TODO: modify HTTP methods to automatically log out if we get a token validation error.
+
 function httpPost(url, body={}, headers={'Content-Type':'application/json'}) {
 	return fetch(url, {
 		method: "POST",

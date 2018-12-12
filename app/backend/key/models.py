@@ -106,3 +106,12 @@ class Students(models.Model):
     class Meta:
         managed = False
         db_table = 'students'
+
+class Users(models.Model):
+    username = models.TextField(primary_key=True)
+    salt = models.TextField()
+    passwordhash = models.TextField()
+
+    class Meta:
+        managed = True
+        db_table = 'users'
