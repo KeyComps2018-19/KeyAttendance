@@ -41,5 +41,5 @@ class Login(APIView):
 			token = buildToken(request.data['username'], 'user') # TODO: implement role checking.
 			return Response({'token': token})
 		else:
-			return Response({'error':'Invalid Login'}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({'error':'Invalid Parameters'}, status=status.HTTP_400_BAD_REQUEST) # Make sure that this and the other error return the same string, else you can guess usernames.
 		

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { withCredentials } from './Helpers';
 
 class Layout extends Component {
 
@@ -19,7 +18,6 @@ class Layout extends Component {
 
   logout = () => () => {
     window.localStorage.removeItem("key_credentials");
-    this.props.updateToken('');
     this.props.history.push(`/`)
   }
 
@@ -59,4 +57,4 @@ Layout.propTypes = {
   }),
 };
 
-export default withRouter(withCredentials(Layout));
+export default withRouter(Layout);

@@ -28,7 +28,7 @@ def buildToken(username, role):
 def validateToken(token, role):
 	components = token.split('.')
 	if len(components) != 3: 
-		return False
+		return False, "Invalid Token"
 
 	try: 
 		tokenHeader = json.loads(urlsafe_b64decode(components[0].encode('ascii').decode()))
@@ -37,27 +37,30 @@ def validateToken(token, role):
 	
 		# Validate header
 		if tokenHeader['alg'] != 'HS256' or tokenHeader['typ'] != 'JWT':
-			return False
+			return False, "Invalid Token"
 
 		# Validate body
-		if tokenBody['role'] != role or tokenBody['exp'] <= time.time():
-			return False
+		if tokenBody['role'] != role:
+			return False, "Insufficient Permissions"
+
+		if tokenBody['exp'] <= time.time():
+			return False, "Invalid Token"
 
 		# Validate signature
 		header = components[0].encode('ascii')
 		body = components[1].encode('ascii')
 		signedHash = hmac.new(key, msg=(str(header) + '.' + str(body)).encode(), digestmod=hashlib.sha256)
 		if signedHash.digest() != tokenSignature:
-			return False
+			return False, "Invalid Token"
 
 	except Exception as e:
-		return False
+		return False, "Invalid Token"
 
-	return True
+	return True, "Validated"
 
 def validateRequest(request, role):
 	if not 'HTTP_TOKEN' in request.META:
-		return False
+		return False, "Missing Token"
 
 	return validateToken(request.META['HTTP_TOKEN'], role)
 

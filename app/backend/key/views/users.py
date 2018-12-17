@@ -44,8 +44,9 @@ class UserView(APIView):
 		
 	# Fetch a list of all usernames
 	def get(self, request):
-		if not validateRequest(request, 'user'):
-			return Response({'error':'Authorization Failed'}, status='400')
+		valid, msg = validateRequest(request, 'user')
+		if not valid:
+			return Response({'error':msg}, status='403')
 
 		items = Users.objects.all()
 		serializer = UserSerializer(items, many=True)
