@@ -10,12 +10,19 @@ class Login extends React.Component {
         this.state = {
 			username: "",
             password:"",
-            error: false
+            error: false,
+            firstLogin: true
 		}
 		
 		this.onUsernameChange = this.onUsernameChange.bind(this);
         this.onPasswordChange = this.onPasswordChange.bind(this);
         this.submit = this.submit.bind(this);
+    }
+
+    componentDidMount() {
+        if (localStorage.getItem('loggedIn') != null) {
+            this.setState({firstLogin: false});
+        }
     }
 
     onUsernameChange(e) {
@@ -38,7 +45,14 @@ class Login extends React.Component {
                 this.setState({error: true, username: "", password: ""});
             } else {
                 response.json().then(result => {
+                    // Store token in browser
                     window.localStorage.setItem("key_credentials", result.token);
+                    // Store permissions / role in browser
+                    let partitions = result.token.split('.');
+                    let tokenData = JSON.parse(atob(partitions[1]));
+                    window.localStorage.setItem("role", tokenData.role);
+                    // Flag that we've logged in before
+                    window.localStorage.setItem("loggedIn", 'true');
                     this.props.history.push(`/attendance`);
                 })
             }
@@ -78,6 +92,7 @@ class Login extends React.Component {
                                         <Button block onClick={this.submit} bsStyle="primary">Continue</Button>
                                         <br/>
                                         {this.state.error && <Alert bsStyle='danger'>Invalid username or password. Please try again.</Alert>}
+                                        {!this.state.firstLogin && <Alert bsStyle='info'>You have been logged out.</Alert>}
                                     </form>
                                 </Well>
                             </div>

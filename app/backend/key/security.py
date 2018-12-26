@@ -4,6 +4,7 @@ import time
 import hashlib
 import json
 import hmac
+from rest_framework.response import Response
 
 # Cryptographic key for signing tokens
 key = b""
@@ -59,10 +60,10 @@ def validateToken(token, role):
 	return True, "Validated"
 
 def validateRequest(request, role):
-	if not 'HTTP_TOKEN' in request.META:
+	if not 'HTTP_AUTHORIZATION' in request.META:
 		return False, "Missing Token"
 
-	return validateToken(request.META['HTTP_TOKEN'], role)
+	return validateToken(request.META['HTTP_AUTHORIZATION'], role)
 
 # To be called on startup
 # Generates a cryptographically random key

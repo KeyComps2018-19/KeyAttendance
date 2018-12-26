@@ -52,10 +52,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-CORS_ORIGIN_WHITELIST = (
-    'localhost:3000/'
-)
-
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -142,3 +138,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# CORS
+
+CORS_ORIGIN_ALLOW_ALL = True # This is somewhat insecure for the time being, but will facilitate testing.

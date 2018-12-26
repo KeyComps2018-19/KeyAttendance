@@ -54,6 +54,10 @@ class UserView(APIView):
 
 	# Remove a user
 	def delete(self, request):
+		valid, msg = validateRequest(request, 'user')
+		if not valid:
+			return Response({'error':msg}, status='403')
+
 		if not self.validateDelete(request):
 			return Response({'error':'Invalid Parameters'}, status='400')
 
@@ -63,6 +67,10 @@ class UserView(APIView):
 
 	# Create a user
 	def post(self, request):
+		valid, msg = validateRequest(request, 'user')
+		if not valid:
+			return Response({'error':msg}, status='403')
+
 		if not self.validatePost(request):
 			return Response({'error':'Invalid Parameters'}, status='400')
 		
@@ -85,6 +93,10 @@ class UserView(APIView):
 
 	# Update a user's password
 	def patch(self, request):
+		valid, msg = validateRequest(request, 'user')
+		if not valid:
+			return Response({'error':msg}, status='403')
+			
 		if not self.validatePatch(request):
 			return Response({'error':'Invalid Parameters'}, status='400')
 

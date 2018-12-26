@@ -17,7 +17,7 @@ function httpPost(url, body={}) {
 
 	return fetch(url, {
 		method: "POST",
-		headers: {'Content-Type':'application/json', 'Token':token},
+		headers: {'Content-Type':'application/json', 'Authorization':token},
 		body: JSON.stringify(body)
 	}).then(response => {
 		if (response.status >= 400) {
@@ -44,7 +44,7 @@ function httpPatch(url, body={}) {
 
 	return fetch(url, {
 		method: "PATCH",
-		headers: {'Content-Type':'application/json', 'Token':token},
+		headers: {'Content-Type':'application/json', 'Authorization':token},
 		body: JSON.stringify(body)
 	}).then(response => {
 		if (response.status >= 400) {
@@ -71,7 +71,7 @@ function httpGet(url) {
 
 	return fetch(url, {
 		method: "GET",
-		headers: {'Content-Type':'application/json', 'Token':token},
+		headers: {'Content-Type':'application/json', 'Authorization':token},
 	}).then(response => {
 		if (response.status >= 400) {
 			// Logout if we got a token validation error
@@ -97,7 +97,7 @@ function httpDelete(url, body={}) {
 
 	return fetch(url, {
 		method: "DELETE",
-		headers: {'Content-Type':'application/json', 'Token':token},
+		headers: {'Content-Type':'application/json', 'Authorization':token},
 		body: JSON.stringify(body)
 	}).then(response => {
 		if (response.status >= 400) {
@@ -124,12 +124,9 @@ function compareActivities(a,b) {
 async function downloadAttendanceCSV(startDate, endDate=null) {
 	// Get data
 	const url = (startDate === endDate || endDate === null) ? `http://127.0.0.1:8000/api/attendance?day=${startDate}` : `http://127.0.0.1:8000/api/attendance?startdate=${startDate}&enddate=${endDate}`;
-	const rawAttendanceData = httpGet(url);
-	const attendanceData = await rawAttendanceData.json();
-	const rawStudentData = httpGet('http://127.0.0.1:8000/api/students');
-	const studentData = await rawStudentData.json();
-	const rawActivityData = httpGet(`http://127.0.0.1:8000/api/activities`);
-	const activityData = await rawActivityData.json();
+	const attendanceData = await httpGet(url);
+	const studentData = await httpGet('http://127.0.0.1:8000/api/students');
+	const activityData = await httpGet(`http://127.0.0.1:8000/api/activities`);
 	activityData.sort(compareActivities) // Make sure that our columns are in a consistent order
 
 	// Make sure we got the data we came for.
@@ -222,4 +219,14 @@ const checkCredentials = (Component) => {
 	}
 }
 
-export { downloadAttendanceCSV, compareActivities, httpPost, httpPatch, httpGet, httpDelete, checkCredentials, history }
+// Only allows a component to render if the proper role is stored
+const withRole = (Component, role) => {
+	const storedRole = window.localStorage.getItem("role");
+	if (storedRole !== role) {
+		return null
+	} else {
+		return <Component/>;
+	}
+}
+
+export { downloadAttendanceCSV, compareActivities, httpPost, httpPatch, httpGet, httpDelete, checkCredentials, history, withRole }
