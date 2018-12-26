@@ -44,20 +44,12 @@ class UserView(APIView):
 		
 	# Fetch a list of all usernames
 	def get(self, request):
-		valid, msg = validateRequest(request, 'user')
-		if not valid:
-			return Response({'error':msg}, status='403')
-
 		items = Users.objects.all()
 		serializer = UserSerializer(items, many=True)
 		return Response(serializer.data, content_type='application/json')
 
 	# Remove a user
 	def delete(self, request):
-		valid, msg = validateRequest(request, 'user')
-		if not valid:
-			return Response({'error':msg}, status='403')
-
 		if not self.validateDelete(request):
 			return Response({'error':'Invalid Parameters'}, status='400')
 
@@ -67,10 +59,6 @@ class UserView(APIView):
 
 	# Create a user
 	def post(self, request):
-		valid, msg = validateRequest(request, 'user')
-		if not valid:
-			return Response({'error':msg}, status='403')
-
 		if not self.validatePost(request):
 			return Response({'error':'Invalid Parameters'}, status='400')
 		
@@ -92,11 +80,7 @@ class UserView(APIView):
 			return Response({'error':'Invalid Parameters'}, status=status.HTTP_400_BAD_REQUEST)
 
 	# Update a user's password
-	def patch(self, request):
-		valid, msg = validateRequest(request, 'user')
-		if not valid:
-			return Response({'error':msg}, status='403')
-			
+	def patch(self, request):			
 		if not self.validatePatch(request):
 			return Response({'error':'Invalid Parameters'}, status='400')
 
