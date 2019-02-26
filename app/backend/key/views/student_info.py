@@ -1,5 +1,6 @@
 from django.core import serializers
 from ..models import StudentInfo as StudentInfoModel
+from ..models import Students, StudentColumn
 from ..serializers import StudentInfoSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -13,7 +14,7 @@ class StudentInfo(APIView):
         if 'student_id' in request.query_params:
             try:
                 StudentInfoModel.objects.filter(student_id=int(request.query_params['student_id']))
-            except Exception as e:
+            except:
                 return False
         return True
       
@@ -23,6 +24,25 @@ class StudentInfo(APIView):
         except:
             return False
         return True
+
+    def validateInfo(self, info):
+        if not 'student_id' in info or not 'info_id' in info:
+            return False
+        try:
+            Students.objects.get(pk=info['student_id'])
+            StudentColumn.objects.get(pk=info['info_id'])
+        except:
+            return False
+        return True
+
+    def validatePost(self, request):
+        if (isinstance(request.data, list)):
+            for item in request.data:
+                if (not self.validateInfo(item)):
+                    return False
+            return True
+        else:
+            return self.validateInfo(request.data)
 
     # Get existing student data
     def get(self, request):
@@ -36,13 +56,11 @@ class StudentInfo(APIView):
       
     # Create a new student
     def post(self, request):
-        # Note: Until we convert student.id to an autofield/serial, this will require that we create a new student ID for new students.
-        # So, for now we'll just assign them the UNIX timestamp, since that should be pretty unique.
-        # This approach will break on January 17, 2038, when UNIX timestamps will exceed 32 bits, so we'll probably want to fix this.
-        if not 'student_id' in request.data:
-            request.data['student_id'] = round(time.time())
+        if not self.validatePost(request):
+            return Response({'error':'Invalid Paremeters'}, status='400')
+        is_many = True if isinstance(request.data, list) else False
 
-        serializer = StudentInfoSerializer(data=request.data)
+        serializer = StudentInfoSerializer(data=request.data, many=is_many)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

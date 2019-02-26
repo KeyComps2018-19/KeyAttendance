@@ -43,10 +43,43 @@ class Heatmap extends Component {
 
     this.state = {
       data: props.data,
-        yArray: ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed", ],
+        // yArray is used for the reports Heatmaps and yArrayStudents is used for students heatmap
         yArrayStudents: ["1", "2", "3", "4", "5"]
     };
   }
+
+  // Sets the correct range for the y-axis depending on what day the data starts on
+    // This assumes the range length will always be exactly one week
+  setYArrayRange(data) {
+      try {
+          if (data[0]["y"] === "Thu") {
+              return ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed", ]
+          }
+          else if (data[0]["y"] === "Fri") {
+              return ["Fri", "Sat", "Sun", "Mon", "Tue", "Wed", "Thu", ]
+          }
+          else if (data[0]["y"] === "Sat") {
+              return ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", ]
+          }
+          else if (data[0]["y"] === "Sun") {
+              return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", ]
+          }
+          else if (data[0]["y"] === "Mon") {
+              return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", ]
+          }
+          else if (data[0]["y"] === "Tue") {
+              return ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Mon",]
+          }
+          else if (data[0]["y"] === "Wed") {
+              return ["Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue", ]
+          }
+      }
+      catch(err) {
+          console.log(err);
+      }
+
+
+  };
 
   scaleWidth(heatMapType, dataLength) {
     if (heatMapType === "weekly" || heatMapType === "individualStudent") {
@@ -59,10 +92,10 @@ class Heatmap extends Component {
 
   scaleHeight(heatMapType) {
       if (heatMapType === "weekly" || heatMapType === "individualStudent") {
-          return 350;
+          return 300;
       }
       else if (heatMapType === "annual") {
-          return 200;
+          return 350;
       }
   }
 
@@ -70,17 +103,25 @@ class Heatmap extends Component {
       return "ordinal";
   }
 
-  colorRange(max) {
-      if (max > 0) {
-            return ["#F5FBFD", "teal"]
-        }
-    return ["#F5FBFD", "#F5FBFD"];
-}
+  colorRange(data, heatMapType) {
+      for (var i=0; i<data.length; i++) {
+          if ((heatMapType === "individualStudent"  && data[i]["color"] !== 0) ||
+              ((heatMapType === "weekly" || heatMapType === "annual" ) && data[i]["color"] !== 0)) {
+              return ["#F5FBFD", "teal"]
+          }
+      }
+      return ["#F5FBFD", "#F5FBFD"];
+  }
 
   // Returns the correct y-axis dependent on heatmap type, with axes label reversed
-  reverseYAxis(heatMapType) {
+  reverseYAxis(heatMapType, yArray) {
       if (heatMapType !== "individualStudent") {
-          return this.state.yArray.map(x=>x).reverse();
+          try {
+              return yArray.map(x => x).reverse();
+          }
+          catch (err) {
+              console.log(err);
+          }
       }
       else {
           return this.state.yArrayStudents.map(x=>x).reverse();
@@ -128,22 +169,26 @@ class Heatmap extends Component {
     const maxLegendLabel = this.calculateMaxDataPoint(data);
     const maxHeatMapColor = this.calculateHeatmapColor(maxLegendLabel);
     const heatMapColors = this.colorRange(maxLegendLabel)
+    const yArray = this.setYArrayRange(data);
+
 
     return (
+      <div>
+        <div style={{margin:20}}>
       <XYPlot
         width={this.scaleWidth(heatMapType, dataLength)}
         height={this.scaleHeight(heatMapType)}
-        margin={{top: 30}}
+        margin={{top: 30, left: 45}}
         xType="ordinal"
         yType={this.axisType(heatMapType)}
-        yDomain={this.reverseYAxis(heatMapType)}
+        yDomain={this.reverseYAxis(heatMapType, yArray)}
         >
         <XAxis orientation='top'/>
         <YAxis orientation='left'/>
 
         <HeatmapSeries
-              className="heatmap-series-example"
-              colorRange = {heatMapColors}
+            className="heatmap-series-example"
+            colorRange = {this.colorRange(data, heatMapType)}
               data={data}
               style={{
                 stroke: 'black',
@@ -165,6 +210,19 @@ class Heatmap extends Component {
               />
 
       </XYPlot>
+      </div>
+
+      <ContinuousColorLegend
+      width={300}
+      startTitle={minLegendLabel}
+      midTitle={Math.round((maxLegendLabel+minLegendLabel)/2)}
+      endTitle= {maxLegendLabel}
+      startColor="#F5FBFD"
+      endColor={maxHeatMapColor}
+      height={100}
+      />
+</div>
+      
     );
   };
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, Button, ControlLabel, FormControl, FormGroup, Modal } from 'react-bootstrap';
-import { httpPost } from './Helpers';
+import { httpPost, domain } from './Helpers';
 
 class AddUserModal extends React.Component {
     
@@ -102,7 +102,7 @@ class AddUserModal extends React.Component {
             last_name: self.state.last_name,
             groups: groups,
             is_active: self.state.is_active};
-        httpPost('http://127.0.0.1:8000/api/users/', body)
+        httpPost(`https://${domain}/api/users/`, body)
             .then(function (result) {
                 if ('error' in result) {
                     self.setState({backendError: true});

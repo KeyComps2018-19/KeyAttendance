@@ -33,7 +33,7 @@ class UserHistoryButton extends React.Component {
     render() {
         return(
             <div>
-                <Button bsStyle="link" onClick={this.handleClick}>{this.state.row['name']}</Button>
+                <Button bsStyle="link" onClick={this.handleClick}>{this.state.row['name'] === undefined || this.state.row['name'] === ' ' ? "[User History]" : this.state.row['name'] }</Button>
             </div>
         )
     }

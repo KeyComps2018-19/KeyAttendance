@@ -39,7 +39,6 @@ class Layout extends Component {
     let navItems = <Nav>
         {nav}
         <NavItem onClick={this.handleItemClick('reports')}>Reports</NavItem>
-        <NavItem onClick={this.handleItemClick('alerts')}>Alerts</NavItem>
       </Nav>
     return (
       <div>

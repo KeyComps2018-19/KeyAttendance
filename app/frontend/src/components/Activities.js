@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactCollapsingTable from 'react-collapsing-table';
-import { httpGet, httpPatch } from './Helpers';
+import { httpGet, httpPatch, domain } from './Helpers';
 import ShiftDownButton from './ShiftDownButton';
 import ShiftUpButton from './ShiftUpButton';
 import ShowActivityCheckbox from './ShowActivityCheckbox';
@@ -27,7 +27,7 @@ class Activities extends React.Component {
 
     async componentDidMount() {
         try {
-            const activities = await httpGet('http://127.0.0.1:8000/api/activities');
+            const activities = await httpGet(`https://${domain}/api/activities/`);
             this.setState({
                 activities
             });
@@ -50,7 +50,7 @@ class Activities extends React.Component {
         let { activities } = this.state;
         let self = this;
         let body = { activity_id1: id1, activity_id2: id2 };
-        httpPatch('http://127.0.0.1:8000/api/activities/', body)
+        httpPatch(`https://${domain}/api/activities/`, body)
             .then(function (response) {
                 if ('error' in response[0] || 'error' in response[1]) {
                     console.log(response);

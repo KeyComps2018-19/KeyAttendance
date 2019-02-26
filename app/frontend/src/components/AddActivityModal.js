@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, Button, ControlLabel, FormControl, FormGroup, Modal } from 'react-bootstrap';
-import { httpPost } from './Helpers';
+import { httpPost, domain } from './Helpers';
 
 class AddActivityModal extends React.Component {
     
@@ -83,7 +83,7 @@ class AddActivityModal extends React.Component {
             is_showing: self.state.inUse,
             type: self.state.type
         }
-        httpPost('http://127.0.0.1:8000/api/activities/', body)
+        httpPost(`https://${domain}/api/activities/`, body)
             .then(function (result) {
                 if ('error' in result) {
                     if (result['error'] === 400) {

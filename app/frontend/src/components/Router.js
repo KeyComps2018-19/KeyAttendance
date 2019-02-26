@@ -6,7 +6,6 @@ import Attendance from '../views/Attendance';
 import Students from '../views/Students';
 import Reports from '../views/Reports';
 import Admin from '../views/Admin';
-import Alerts from '../views/Alerts';
 import NotFound from '../views/NotFound';
 import { checkCredentials } from './Helpers';
 
@@ -21,7 +20,6 @@ class Router extends React.Component {
                     <Route path='/students' component={(props) => checkCredentials(Students)}/> {/* Referencing the component this way causes a re-mount every time the NavBar button is clicked, which solves our problem of refreshing the page but costs some performance in teh frontend and calls to the database */}
                     <Route path='/reports' render={() => checkCredentials(Reports)}/>
                     <Route path='/admin' render={() => checkCredentials(Admin)}/>
-                    <Route path='/alerts' render={() => checkCredentials(Alerts)}/>
                     <Route render={() => checkCredentials(NotFound)}/>
                 </Switch>
             </Layout>

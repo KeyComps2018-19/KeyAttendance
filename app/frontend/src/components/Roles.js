@@ -3,7 +3,7 @@ import { Button, ButtonToolbar } from 'react-bootstrap';
 import AddRoleModal from './AddRoleModal';
 import EditRoleButton from './EditRoleButton';
 import ReactCollapsingTable from 'react-collapsing-table';
-import { httpGet } from './Helpers';
+import { httpGet, domain } from './Helpers';
 
 
 class Roles extends React.Component {
@@ -22,8 +22,8 @@ class Roles extends React.Component {
 
     async componentDidMount() {
         try {
-            const roles = await httpGet('http://127.0.0.1:8000/api/groups');
-            const permissions_list = await httpGet('http://127.0.0.1:8000/api/permissions');
+            const roles = await httpGet(`https://${domain}/api/groups/`);
+            const permissions_list = await httpGet(`https://${domain}/api/permissions/`);
             let permission_ids = {};
             for (var index in permissions_list) {
                 permission_ids[permissions_list[index].name] = permissions_list[index].id;

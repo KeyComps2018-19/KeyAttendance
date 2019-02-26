@@ -30,6 +30,8 @@ class StudentColumn(APIView):
             return Response({'error':'Invalid Parameters'}, status='400')
   
         students = StudentColumnModel.objects.all()
+        if 'quick_add' in request.query_params and request.query_params['quick_add'] == 'True':
+            students = students.filter(quick_add=True)
         serializer = StudentColumnSerializer(students, many=True)
         
         return Response(serializer.data, content_type='application/json')

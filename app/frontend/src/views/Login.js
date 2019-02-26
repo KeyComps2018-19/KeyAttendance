@@ -1,6 +1,7 @@
 import React from 'react';
 import { Alert, Button, ControlLabel, FormControl, FormGroup, Well } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import { domain } from '../components/Helpers';
 
 class Login extends React.Component {
 
@@ -36,7 +37,7 @@ class Login extends React.Component {
     submit(e) {
         e.preventDefault();
         // Submit username and password to backend
-        fetch('http://127.0.0.1:8000/api-token-auth/', {
+        fetch(`https://${domain}/api-token-auth/`, {
             method: "POST", 
             headers:{'Content-Type':'application/json'}, 
             body: JSON.stringify({username: this.state.username, password: this.state.password})

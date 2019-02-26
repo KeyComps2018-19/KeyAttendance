@@ -1,0 +1,9 @@
+Django==2.1.7
+django-cors-headers==2.4.0
+django-simple-history==2.7.0
+djangorestframework==3.9.1
+djangorestframework-jwt==1.11.0
+Pillow==5.4.1
+psycopg2==2.7.7
+PyJWT==1.7.1
+pytz==2018.9

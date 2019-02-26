@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, ControlLabel, FormControl, FormGroup, Modal } from 'react-bootstrap';
-import { httpDelete, httpPatch } from './Helpers';
+import { httpDelete, httpPatch, domain } from './Helpers';
 
 class EditRoleModal extends React.Component {
     
@@ -45,7 +45,7 @@ class EditRoleModal extends React.Component {
       
     delete() {
         const self = this;
-        httpDelete(`http://127.0.0.1:8000/api/groups/?id=${self.state.row.id}`)
+        httpDelete(`https://${domain}/api/groups/?id=${self.state.row.id}`)
         .then(function (result) {
             if ('error' in result) {
                 self.setState({
@@ -75,7 +75,7 @@ class EditRoleModal extends React.Component {
             }
         }
         body["permissions"] = permissions;
-        httpPatch('http://127.0.0.1:8000/api/groups/', body)
+        httpPatch(`https://${domain}/api/groups/`, body)
             .then(function (result) {
                 if ('error' in result) {
                     console.log(result);

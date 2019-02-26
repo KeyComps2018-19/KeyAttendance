@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, ControlLabel, FormControl, FormGroup, Modal } from 'react-bootstrap';
-import { httpPost } from './Helpers';
+import { httpPost, domain } from './Helpers';
 
 class AddStudentModal extends React.Component {
     
@@ -10,13 +10,34 @@ class AddStudentModal extends React.Component {
         this.state = {
 			firstName: "",
 			lastName:"",
+			show: false,
+			studentFields: {},
+			studentInfo: {},
 		}
 		
 		this.cancel = this.cancel.bind(this);
 		this.submit = this.submit.bind(this);
 		this.onFirstNameChange = this.onFirstNameChange.bind(this);
 		this.onLastNameChange = this.onLastNameChange.bind(this);
+		this.handleInfoChange = this.handleInfoChange.bind(this);
 	}
+
+	componentDidUpdate() {
+        if (this.props.show !== this.state.show) {
+			let studentInfo = {};
+			const fieldsList = this.props.studentFields;
+			let studentFields = {};
+			for (var index in fieldsList) {
+				studentInfo[fieldsList[index].name] = '';
+				studentFields[fieldsList[index].name] = fieldsList[index];
+			}
+            this.setState({
+				show: this.props.show,
+				studentFields: studentFields,
+				studentInfo: studentInfo,
+			});
+        }
+    }
 
 	validateInput() {
 		const { firstName, lastName } = this.state;
@@ -45,23 +66,84 @@ class AddStudentModal extends React.Component {
 		this.props.onSubmit();
 	}
 
+	createStudentInfo(name, value, student_id, self) {
+		const {studentFields} = self.state;
+		const field = studentFields[name];
+		let body = {student_id: student_id, info_id: field.info_id};
+		if (field.type === 'str') {
+			body['str_value'] = value;
+		} else if (field.type === 'int') {
+			body['int_value'] = value;
+		} else if (field.type === 'date') {
+			body['date_value'] = value;
+		}
+		return body;
+	}
+
 	submit() {
 		const self = this;
-		httpPost('http://127.0.0.1:8000/api/students/', {
+		httpPost(`https://${domain}/api/students/`, {
 			first_name: this.state.firstName,
 			last_name: this.state.lastName
 		}).then(function(result) {
 			if ('error' in result) {
 				console.log(result);
 			} else {
-				self.setState({
-					firstName: "",
-					lastName:"",
-				});
-				self.props.onSubmit(result);
+				const student_id = result.id;
+				const {studentInfo} = self.state;
+				let infoBody = [];
+				for (var field in studentInfo) {
+					if (studentInfo[field] !== '') {
+						infoBody.push(self.createStudentInfo(field, studentInfo[field], student_id, self));
+					}
+				}
+				httpPost(`https://${domain}/api/student_info/`, infoBody)
+					.then(function (infoResult) {
+						if ('error' in infoResult) {
+							console.log(infoResult);
+						} else {
+							self.setState({
+								firstName: "",
+								lastName: "",
+						});
+						self.props.onSubmit(result);
+					}
+				})
 			}
 		})
 	}
+
+	createStudentInfoFields () {
+		let info = [];
+		const { studentFields } = this.state;
+		for (var fieldName in studentFields) {
+			const field = studentFields[fieldName];
+			let type;
+			switch (field.type) {
+				case 'str':
+					type = "text";
+					break;
+				case 'int':
+					type = "int";
+					break;
+				case 'date':
+					type = "date";
+					break;
+			}
+			info.push(<div  key={field.info_id}><ControlLabel>{fieldName}</ControlLabel><FormControl value={this.state.studentInfo[fieldName]} name={fieldName} type={type} onChange={this.handleInfoChange} /><br/></div>);
+		}
+		return info;
+	}
+
+	handleInfoChange = e => {
+        const name = e.target.name;
+		const value = e.target.value;
+		let { studentInfo } = this.state;
+		studentInfo[name] = value;
+        this.setState({
+			studentInfo
+        });
+    };
 
     render() {
         return(
@@ -92,6 +174,8 @@ class AddStudentModal extends React.Component {
 								placeholder="Last"
 								onChange={this.onLastNameChange}
 							/>
+							<br/>
+							{this.createStudentInfoFields()}
 							<FormControl.Feedback />
 						</FormGroup>
 					</form>

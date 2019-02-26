@@ -9,6 +9,8 @@ import createBrowserHistory from 'history/createBrowserHistory';
 
 const history = createBrowserHistory();
 
+const domain = 'app.jordansybesma.com' // '127.0.0.1:8000'
+
 function httpPost(url, body={}) {
 	const token = window.localStorage.getItem("key_credentials");
 
@@ -57,8 +59,10 @@ function httpPatch(url, body={}) {
 				history.push(`/`)
 			}
 			return {'error':response.status}
-		} else {
+		} else if (response) {
 			return response.json()
+		} else {
+			return // we got nothing back
 		}
 	}); 
 }
@@ -135,17 +139,15 @@ function logout() {
 
 async function downloadAttendanceCSV(startDate, endDate=null) {
 	// Get data
-	const url = (startDate === endDate || endDate === null) ? `http://127.0.0.1:8000/api/attendance?day=${startDate}` : `http://127.0.0.1:8000/api/attendance?startdate=${startDate}&enddate=${endDate}`;
+	const url = (startDate === endDate || endDate === null) ? `https://${domain}/api/attendance/?day=${startDate}` : `https://${domain}/api/attendance/?startdate=${startDate}&enddate=${endDate}`;
 	const attendanceData = await httpGet(url);
-	const studentData = await httpGet('http://127.0.0.1:8000/api/students');
-	const activityData = await httpGet(`http://127.0.0.1:8000/api/activities`);
+	const studentData = await httpGet(`https://${domain}/api/students/`);
+	const activityData = await httpGet(`https://${domain}/api/activities/`);
 	activityData.sort(compareActivities) // Make sure that our columns are in a consistent order
-
 	// Make sure we got the data we came for.
 	if (attendanceData.length === 0 || activityData.length === 0) {
 		return
 	}
-
 	// Build activity lookup table
 	var activities = {}
 	for (var i = 0; i < activityData.length; i++) {
@@ -185,6 +187,7 @@ async function downloadAttendanceCSV(startDate, endDate=null) {
 			if (studentData[j].id === entries[keys[i]].id) {
 				row[1] = studentData[j].first_name;
 				row[2] = studentData[j].last_name;
+				row[3] = (studentData[j]["student_key"] !== null ? studentData[j]["student_key"] : 'N/A')
 				break;
 			}
 		} 
@@ -198,12 +201,10 @@ async function downloadAttendanceCSV(startDate, endDate=null) {
 				case 'Last':
 					break;
 				case 'Student Key':
-					row[j] = 'N/A' // Needs student keys to be added to the database
 					break;
 				default:
 					// If this row has a value for this column, put it in the table. Else plop an 'N' in this column.
 					const activity = activities[columns[j]];
-					console.log(entries[keys[i]][activity.id])
 					if (entries[keys[i]][activity.id] === undefined) {
 						if (activity.type === 'boolean') {
 							row[j] = 'N';
@@ -218,6 +219,8 @@ async function downloadAttendanceCSV(startDate, endDate=null) {
 		sheet.push(row);
 	}
 
+	console.log("sheet: ", sheet);
+	console.log("columns: ", columns);
 	// Put data in a CSV
 	var papa = require('papaparse') // a strangely named but fairly effective CSV library
 	var csvString = papa.unparse({
@@ -229,6 +232,24 @@ async function downloadAttendanceCSV(startDate, endDate=null) {
 	var element = document.createElement('a');
 	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csvString));
 	element.setAttribute('download', `Attendance_${(startDate === endDate || endDate === null) ? startDate : `${startDate}_${endDate}`}.csv`);
+	element.style.display = 'none';
+	document.body.appendChild(element);
+	element.click();
+	document.body.removeChild(element);
+}
+
+function downloadReportsCSV(json, columnHeaders, title) {
+	// Put data in a CSV
+	var papa = require('papaparse') // a strangely named but fairly effective CSV library
+	var csvString = papa.unparse({
+		fields: columnHeaders,
+		data: json
+	});
+
+	// Download - it's a lil janky but it works. Thanks, stackoverflow!
+	var element = document.createElement('a');
+	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csvString));
+	element.setAttribute('download', `${title}.csv`);
 	element.style.display = 'none';
 	document.body.appendChild(element);
 	element.click();
@@ -259,6 +280,7 @@ const withRole = (Component, role) => {
 		return <Component/>;
 	}
 }
+
 
 // Returns date obj for the date that is "days ago" number of days ago
 //from today's date
@@ -296,4 +318,4 @@ function dateToString(date){
     return dateString;
 }
 
-export { downloadAttendanceCSV, compareActivities, httpPost, httpPatch, httpGet, httpDelete, checkCredentials, history, withRole, getEarlierDate, getPrevSunday, getNextSaturday, dateToString }
+export { downloadReportsCSV, downloadAttendanceCSV, compareActivities, httpPost, httpPatch, httpGet, httpDelete, checkCredentials, history, withRole, getEarlierDate, getPrevSunday, getNextSaturday, dateToString }

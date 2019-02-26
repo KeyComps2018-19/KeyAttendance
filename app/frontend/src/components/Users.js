@@ -5,7 +5,7 @@ import ReactCollapsingTable from 'react-collapsing-table';
 import AddUserModal from './AddUserModal';
 import EditUserButton from './EditUserButton';
 import UserHistoryButton from './UserHistoryButton';
-import { httpGet } from './Helpers';
+import { httpGet, domain } from './Helpers';
 import UserHistory from './UserHistory';
 
 class Users extends React.Component {
@@ -35,9 +35,9 @@ class Users extends React.Component {
 
     async componentDidMount() {
         try {
-            const users = await httpGet('http://127.0.0.1:8000/api/users');
+            const users = await httpGet(`https://${domain}/api/users/`);
             let suggestionsArray = this.makeSuggestionsArray(users);
-            const roles = await httpGet('http://127.0.0.1:8000/api/groups');
+            const roles = await httpGet(`https://${domain}/api/groups/`);
             const role_ids = {};
             const role_names = {};
             for (var index in roles) {
@@ -58,7 +58,7 @@ class Users extends React.Component {
 
     async componentDidUpdate() {
         if (this.props.refreshRoles) {
-            const roles = await httpGet('http://127.0.0.1:8000/api/groups');
+            const roles = await httpGet(`https://${domain}/api/groups/`);
             const role_ids = {};
             const role_names = {};
             for (var index in roles) {
@@ -200,7 +200,7 @@ class Users extends React.Component {
 
     getUserHistory(userId, username) {
         const self = this;
-        httpGet(`http://127.0.0.1:8000/api/history?user_id=${userId}`)
+        httpGet(`https://${domain}/api/history/?user_id=${userId}`)
             .then(function (result) {
                 if ('error' in result) {
                     console.log(result);

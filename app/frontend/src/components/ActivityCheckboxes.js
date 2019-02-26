@@ -1,7 +1,7 @@
 import React from 'react';
 import ActivityCheckbox from'./ActivityCheckbox.js'
 import { Label } from 'react-bootstrap';
-import { httpDelete, httpPost } from './Helpers';
+import { httpDelete, httpPost, domain } from './Helpers';
 
 class ActivityCheckboxes extends React.Component {
 
@@ -73,7 +73,7 @@ class ActivityCheckboxes extends React.Component {
                 }
                 body["num_value"] = value;
             }
-            httpPost('http://127.0.0.1:8000/api/attendance/', body)
+            httpPost(`https://${domain}/api/attendance/`, body)
             .then(function(result) {
                 // Update state to refresh checkboxes
                 if ('error' in result) {
@@ -96,7 +96,7 @@ class ActivityCheckboxes extends React.Component {
                 // We're trying to uncheck the last checkbox
                 // show some sort of visual error??
             } else {
-                httpDelete(`http://127.0.0.1:8000/api/attendance?key=${attendanceItemID}`).then(function(result) {
+                httpDelete(`https://${domain}/api/attendance/?key=${attendanceItemID}`).then(function(result) {
                     if ('error' in result) {
                         self.setState({error: result.error})
                     } else {
