@@ -9,13 +9,13 @@ import createBrowserHistory from 'history/createBrowserHistory';
 
 const history = createBrowserHistory();
 
-// For local development
-// const domain = '127.0.0.1:8000'
-// const protocol = 'http'
+//For local development
+const domain = '127.0.0.1:8000'
+const protocol = 'http'
 
-// For production server
-const domain = 'www.keyattendance.com'
-const protocol = 'https'
+// // For production server
+// const domain = 'www.keyattendance.com'
+// const protocol = 'https'
 
 
 function httpPost(url, body={}) {
@@ -234,6 +234,105 @@ function logout() {
 	window.localStorage.removeItem("permissions");
 }
 
+
+// async function downloadVolunteerAttendanceCSV(startDate, endDate = null){
+// 	// Get data
+// 	const url = (startDate === endDate || endDate === null) ? `${protocol}://${domain}/api/attendance/?day=${startDate}` : `${protocol}://${domain}/api/attendance/?startdate=${startDate}&enddate=${endDate}`;
+// 	const attendanceData = await httpGet(url);
+// 	const studentData = await httpGet(`${protocol}://${domain}/api/volunteers/`);
+// 	//const activityData = await httpGet(`${protocol}://${domain}/api/activities/`);
+// 	activityData.sort(compareActivities) // Make sure that our columns are in a consistent order
+// 	// Make sure we got the data we came for.
+// 	if (attendanceData.length === 0 || activityData.length === 0) {
+// 		return
+// 	}
+// 	// Build activity lookup table
+// 	var activities = {}
+// 	for (var i = 0; i < activityData.length; i++) {
+// 		if (activityData[i].is_showing) {
+// 			activities[activityData[i].name] = {'id': activityData[i].activity_id, 'ordering': activityData[i].ordering, 'type': activityData[i].type}
+// 		}
+// 	}
+
+// 	// Combine attendance items. Need to sort by date and student id.
+// 	var entries = {}
+// 	for (var i = 0; i < attendanceData.length; i++) {
+// 		if (entries[`${attendanceData[i].student_id}${attendanceData[i].date}`] == null) {
+// 			entries[`${attendanceData[i].student_id}${attendanceData[i].date}`] = {'date':attendanceData[i].date, 'id': attendanceData[i].student_id}
+// 		}
+// 		if (attendanceData[i].str_value !== null) {
+// 			entries[`${attendanceData[i].student_id}${attendanceData[i].date}`][attendanceData[i].activity_id] = attendanceData[i].str_value;
+// 		} else if (attendanceData[i].num_value !== null) {
+// 			entries[`${attendanceData[i].student_id}${attendanceData[i].date}`][attendanceData[i].activity_id] = attendanceData[i].num_value;
+// 		} else {
+// 			entries[`${attendanceData[i].student_id}${attendanceData[i].date}`][attendanceData[i].activity_id] = 'Y';
+// 		}
+// 	}
+
+// 	// Build spreadsheet
+// 	var sheet = []
+// 	var columns = ['Date','First', 'Last', 'Student Key']
+// 	for (var i = 0; i < activityData.length; i++) {
+// 		if (activityData[i].is_showing) {
+// 			columns.push(activityData[i].name)
+// 		}
+// 	}
+// 	const keys = Object.keys(entries)
+// 	for (var i = 0; i < keys.length ; i++) {
+// 		var row = []
+// 		// match student data to current id
+// 		for (var j = 0; j < studentData.length; j++) { // unfortunately, student data isn't in any particular order. O(n) it is!
+// 			if (studentData[j].id === entries[keys[i]].id) {
+// 				row[1] = studentData[j].first_name;
+// 				row[2] = studentData[j].last_name;
+// 				row[3] = (studentData[j]["student_key"] !== null ? studentData[j]["student_key"] : 'N/A')
+// 				break;
+// 			}
+// 		} 
+// 		for (var j = 0; j < columns.length; j++) {
+// 			switch (columns[j]) {
+// 				case 'Date':
+// 					row[j] = entries[keys[i]].date
+// 					break;
+// 				case 'First':
+// 					break;
+// 				case 'Last':
+// 					break;
+// 				case 'Student Key':
+// 					break;
+// 				default:
+// 					// If this row has a value for this column, put it in the table. Else plop an 'N' in this column.
+// 					const activity = activities[columns[j]];
+// 					if (entries[keys[i]][activity.id] === undefined) {
+// 						if (activity.type === 'boolean') {
+// 							row[j] = 'N';
+// 						} else {
+// 							row[j] = 'N/A';
+// 						}
+// 					} else {
+// 						row[j] = entries[keys[i]][activity.id];
+// 					}
+// 			}
+// 		}
+// 		sheet.push(row);
+// 	}
+
+// 	// Put data in a CSV
+// 	var papa = require('papaparse') // a strangely named but fairly effective CSV library
+// 	var csvString = papa.unparse({
+// 		fields: columns,
+// 		data: sheet
+// 	});
+
+// 	// Download - it's a lil janky but it works. Thanks, stackoverflow!
+// 	var element = document.createElement('a');
+// 	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csvString));
+// 	element.setAttribute('download', `Attendance_${(startDate === endDate || endDate === null) ? startDate : `${startDate}_${endDate}`}.csv`);
+// 	element.style.display = 'none';
+// 	document.body.appendChild(element);
+// 	element.click();
+// 	document.body.removeChild(element);
+// }
 async function downloadAttendanceCSV(startDate, endDate=null) {
 	// Get data
 	const url = (startDate === endDate || endDate === null) ? `${protocol}://${domain}/api/attendance/?day=${startDate}` : `${protocol}://${domain}/api/attendance/?startdate=${startDate}&enddate=${endDate}`;

@@ -41,12 +41,15 @@ class Autocomplete extends Component {
     // Filter our suggestions that don't contain the user's input
     const filteredSuggestions = suggestions.filter(
       suggestion =>
+      (
         (suggestion.firstName.toLowerCase().startsWith(userInput.toLowerCase()) === true ||
           suggestion.lastName1.toLowerCase().startsWith(userInput.toLowerCase()) === true ||
           suggestion.lastName2.toLowerCase().startsWith(userInput.toLowerCase()) === true ||
           (suggestion.firstName.toLowerCase() + " " +
             suggestion.lastName1.toLowerCase() + " ").startsWith(userInput.toLowerCase()) === true ||
-            (suggestion.username && suggestion.username.toLowerCase().startsWith(userInput.toLowerCase()) === true))
+            (suggestion.username && suggestion.username.toLowerCase().startsWith(userInput.toLowerCase()) === true)
+            ) || (suggestion.studentKey && suggestion.studentKey.startsWith(userInput) === true )
+            )
     );
 
     // Update the user input and filtered suggestions, reset the active
@@ -177,13 +180,17 @@ class Autocomplete extends Component {
               if (suggestion.username) {
                 username = ' | ' + suggestion.username;
               }
+              let studentKey= '';
+              if (suggestion.studentKey){
+                studentKey=" | " + suggestion.studentKey;
+              }
               return (
                 <p
                   className={className}
                   key={suggestion.id}
                   onClick={onClick}
                 >
-                  {suggestion.firstName} {suggestion.lastName1} {suggestion.lastName2} {username}
+                {suggestion.firstName} {suggestion.lastName1} {suggestion.lastName2} {username} 
                 </p>
               );
             })}

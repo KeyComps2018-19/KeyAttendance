@@ -64,17 +64,21 @@ class NewStudentsReport extends React.Component {
 
 		return (
 			<div>
-				<h3> Download New Student Report </h3>
+				<h3
+				style={{textAlign: 'center', fontSize: '25px'}}
+				>New Student Report </h3>
+				<div style={{margin: '20px'}}>
 				<p>Downloads a spreadsheet containing all students that were checked in for the first time between two dates</p>
-                <Form inline style={{paddingRight: '5px', paddingLeft: '5px'}}>
+                <Form style={{paddingRight: '5px', paddingLeft: '5px'}}>
                   <FormGroup>
                     <ControlLabel>Start Date:</ControlLabel>{' '}
                     <FormControl onChange={this.updateStartDate} value={this.state.startDate} type="date"/>{'  '}
                     <ControlLabel>End Date:</ControlLabel>{' '}
                     <FormControl onChange={this.updateEndDate} value={this.state.endDate} type="date"/>{'  '}
-                    <Button onClick={this.downloadCSV} disabled={buildingCSV}>{buildingCSV ? 'Downloading...' : 'Download'}</Button>
+                    <Button style={{marginTop: '10px'}} onClick={this.downloadCSV} disabled={buildingCSV}>{buildingCSV ? 'Downloading...' : 'Download'}</Button>
                   </FormGroup>
                 </Form>
+			</div>
 			</div>
 		);
 	}

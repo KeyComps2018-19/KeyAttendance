@@ -11,6 +11,45 @@ import datetime
 from simple_history.models import HistoricalRecords
 
 
+
+class Volunteers(models.Model):
+    first_name = models.TextField(blank=True, null=True)
+    last_name = models.TextField(blank=True, null=True)
+    id = models.AutoField(blank=True, primary_key=True)
+    history = HistoricalRecords()
+
+    class Meta:
+        managed = True
+        db_table = 'volunteers'
+
+
+# class VolunteerInfo(models.Model):
+#     volunteer_id = models.IntegerField(blank=True, null=True)
+#     total_hours = models.FloatField(blank =True, null = True)
+#     birthday = models.DateField(blank=True, null=True)
+#     photo_value = models.ImageField(blank=True, null=True, upload_to='profile_pictures/')
+#     photo_url = models.TextField(blank=True, null=True)
+#     history = HistoricalRecords()
+#     class Meta: 
+#         managed = True
+#         db_table = 'volunteerinfo'
+
+class VolunteerAttendanceItems(models.Model):
+    volunteer_id = models.IntegerField(blank=True, null=True)
+    date = models.DateField(default=getCurrentDate)
+    check_in = models.TimeField(default=getCurrentTime)
+    check_out = models.TimeField(default=getCurrentTime)
+    checked_out = models.BooleanField(blank = True, null = True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    description = models.CharField(max_length=20000, blank=True, null=True)
+    visit_number = models.IntegerField(blank=True, null=True)
+    history = HistoricalRecords()
+    id = models.AutoField(primary_key=True, unique=True)
+
+    class Meta:
+        managed = True
+        db_table = 'volunteerattendance'
+
 class Activity(models.Model):
     activity_id = models.AutoField(unique=True, primary_key=True)
     is_showing = models.BooleanField(blank=True, null=True)
@@ -79,8 +118,7 @@ class StudentInfo(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'studentinfo'
-        
+        db_table = 'studentinfo'    
 
 class Students(models.Model):
     first_name = models.TextField(blank=True, null=True)

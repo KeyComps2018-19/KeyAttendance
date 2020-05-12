@@ -282,7 +282,8 @@ class EditUserModal extends React.Component {
 							/>
 							<br/>
                             <ControlLabel>Active</ControlLabel>
-							<FormControl
+                            <FormControl
+                                style={{width: 'auto'}}
                                 type="checkbox"
                                 checked={this.state.is_active || false}
 								value={this.state.is_active}
@@ -301,7 +302,7 @@ class EditUserModal extends React.Component {
                     {this.state.error && <Alert bsStyle='danger'>Invalid password. Please make sure they match and try again.</Alert>}
                     {this.state.backendError && <Alert bsStyle='danger'>{errorMsg}</Alert>}
 					<Button onClick={this.cancel}>Cancel</Button>
-					<Button onClick={this.submit} bsStyle="primary">Save</Button>
+					<Button onClick={() => {if (window.confirm('Are you sure you want to save these changes?')) this.submit()}} bsStyle="primary">Save</Button>
                     <Button onClick={() => { if (window.confirm('Are you sure you wish to delete this user?')) this.delete() } } bsStyle="danger">Delete</Button>
 				</Modal.Footer>
 			</Modal>

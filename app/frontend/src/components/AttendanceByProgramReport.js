@@ -87,9 +87,12 @@ class AttendanceByProgramReport extends React.Component {
 
 		return (
 			<div>
-				<h3> Download Attendance by Program </h3>
+				<h3
+				style={{textAlign: 'center', fontSize: '25px'}}
+				>Attendance by Program </h3>
+				<div style={{margin: '20px'}}>
 				<p>Downloads a spreadsheet containing all attendance records between two dates for a given program.</p>
-                <Form inline style={{paddingRight: '5px', paddingLeft: '5px'}}>
+                <Form style={{paddingRight: '5px', paddingLeft: '5px'}}>
                   <FormGroup>
                     <ControlLabel>Program: </ControlLabel>{' '}
                     <FormControl componentClass="select" 
@@ -103,9 +106,10 @@ class AttendanceByProgramReport extends React.Component {
                     <FormControl onChange={this.updateStartDate} value={this.state.startDate} type="date"/>{'  '}
                     <ControlLabel>End Date:</ControlLabel>{' '}
                     <FormControl onChange={this.updateEndDate} value={this.state.endDate} type="date"/>{'  '}
-                    <Button onClick={this.downloadCSV} disabled={buildingCSV}>{buildingCSV ? 'Downloading...' : 'Download'}</Button>
+                    <Button style={{marginTop: '10px'}} onClick={this.downloadCSV} disabled={buildingCSV}>{buildingCSV ? 'Downloading...' : 'Download'}</Button>
                   </FormGroup>
                 </Form>
+			</div>
 			</div>
 		);
 	}

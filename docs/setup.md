@@ -2,37 +2,27 @@
 
 ## Backend Setup
 
-Make sure that you have pip and python3 installed. At this point, you can choose to use either Pipenv or Virtualenv to manage your local dependencies.
+Make sure that you have python3 and pip installed. If you are using Homebrew on MacOS, `brew install python` [takes care of both](https://docs.brew.sh/Homebrew-and-Python). 
 
-### Pipenv
+### Setting up the Virtual Development Environment
 
-First, to [install pipenv](https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv), run:
+First, install [virtualenv](https://pypi.org/project/virtualenv/):
 
-* `pip install --user pipenv`
+* `pip install virtualenv`
 
-Then, once this is complete, cd to `KeyAttendance/app/backend/` and run:
+This is a package that allows you to isolate a python environment. Any changes you make to a virtual environment will be present anytime you re-open the virtual environment. 
 
-* `pipenv install`
+Once this is complete, cd to `KeyAttendance/app/backend/` and run:
 
-This will load the dependencies of the project from our pipenv files.
+* `virtualenv env`. This creates a virtual environment named `env/`. All the settings/packages/etc that you make will now be recorded in the folders `env/bin`, `env/lib`, etc.
+* `"env/Scripts/activate"` if you're using Windows, or `source env/bin/activate` if you're using a Unix-based OS. This activates the virtual environment. You'll see an indicator that you're in the virtual environment named `(env)`. To exit the virtual environment use `deactivate` or hit Ctrl-d.
+* `pip install -r requirements.txt`. This installs the python dependencies listed in `requirements.txt` into your virtual environment. Remember that these are isolated in your virtual environment `env`, so these packages won't work elsewhere unless you also have them installed elsewhere. You can check this by running `pip list` inside and outside your virtual environment.
 
-### Virtualenv
-
-First, to [install virtualenv](https://virtualenv.pypa.io/en/stable/installation/), run:
-
-* `pip install --user virtualenv`
-
-Then, once this is complete, cd to `KeyAttendance/app/backend/` and run:
-
-* `virtualenv env`
-* `"env/Scripts/activate"` if you're using Windows, or `source env/bin/activate` if you're using a Unix-based OS
-* `pip install -r requirements.txt`
-
-This will create a virtual environment for you in the project folder and install the python dependencies.
+Huzzah! You now have a virtual environment in the project folder will the necessary python dependencies.
 
 ## Frontend Setup
 
-Make sure you have node / npm installed. You'll want to make sure that npm is added to your system path.
+Make sure you have node and npm installed. You'll want to make sure that npm is added to your system path.
 
 * `cd KeyAttendance/app/frontend`
 * `npm install`
@@ -43,14 +33,16 @@ First, you'll want to [download postgres](https://www.postgresql.org/download/).
 
 Now, open up the postgres CLI, and run:
 
-* `CREATE DATABASE keydb`
+* `CREATE DATABASE keydb;`
 
-Close postgres. Now, change directories to make sure you're in `KeyAttendance/app/backend`, activate your virtual environment, and run: 
+Close postgres. Now, change directories to make sure you're in `KeyAttendance/app/backend`, activate your virtual environment(`source env/bin/activate`), and run: 
 
-* `manage.py migrate`
-* `manage.py createsuperuser`
+* `python manage.py migrate`
+* `python manage.py createsuperuser`
+* `python manage.py dbshell` -- perhaps unnecessary? 
 
-This will create the necessary tables in your postgres database and create a new admin account to access our website. Now, open the postgres CLI again, and run:
+
+This will create the necessary tables in your postgres database and create a new admin account to access our website. Now, open the postgres CLI (`psql keydb -U postgres`) again, and run -- perhaps unnecessary?
 
 * `INSERT INTO auth_group VALUES (1, 'Admin');`
 * `INSERT INTO auth_group_permissions(group_id, permission_id) select 1, id from auth_permission;`
@@ -72,7 +64,7 @@ Then, open two terminal windows. In the first:
 * cd to `KeyAttendance/app/frontend/`
 * `npm start`
 
-Then, in the second, activate the virtual environment of your choice and run:
+Then, in the second, activate the virtual environment of your choice in `KeyAttendance/app/backend`and run:
 
 * `python manage.py runserver` if you're on a Windows machine, or `python3 manage.py runserver` if you're on a Unix machine.
 

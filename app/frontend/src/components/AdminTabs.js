@@ -62,13 +62,18 @@ class AdminTabs extends React.Component {
         counter++;
       }
       return (
+        <div style={{minWidth: 'fit-content'}}>
+        <h1 style={{textAlign: 'center', fontSize: '30px'}}>Admin Panel</h1>
+        <br />
         <Tabs
+          style={{background:'#f8f8f8', borderRadius: 'inherit', display: 'grid', }}
           activeKey={this.state.key}
           onSelect={this.handleSelect}
           id="admin-tabs"
         >
           {tabs}
         </Tabs>
+        </div>
       );
     }
   }

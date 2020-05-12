@@ -18,7 +18,7 @@ def memoize(func):
     return memoizer
 
 # This is fairly inefficient, but it works well for this purpose.
-@memoize    
+@memoize
 def levenshtein(s, t):
     if s == "":
         return len(t)

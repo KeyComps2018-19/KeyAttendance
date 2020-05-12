@@ -158,7 +158,7 @@ class EditRoleModal extends React.Component {
 				<Modal.Footer>
                     {this.state.error && <Alert bsStyle='danger'>{errorMsg}</Alert>}
 					<Button onClick={this.cancel}>Cancel</Button>
-					<Button onClick={this.submit} bsStyle="primary">Save</Button>
+					<Button onClick={() => { if (window.confirm('Are you sure you wish to save these changes? All users with this role will experience these changes.')) this.submit() }} bsStyle="primary">Save</Button>
                     <Button onClick={() => { if (window.confirm('Are you sure you wish to delete this role? All users with this role will be set to inactive.')) this.delete() }}
                         bsStyle="danger"
                         disabled={this.state.row.name === "Admin"}>Delete</Button>

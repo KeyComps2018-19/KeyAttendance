@@ -12,6 +12,18 @@ class UserHistory extends React.Component {
         this.closeHistoryView = this.closeHistoryView.bind(this);
     }
 
+    whiteBorderStyle() {
+        return {
+            background: 'white',
+            borderRadius: 'inherit',
+            padding: '10px',
+            borderColor: '#e7e7e7',
+            borderStyle: 'solid',
+            borderWidth: 'thin',
+            marginTop: '10px'
+        }
+    }
+
     componentDidMount() {
         this.setState({
             history: this.props.history,
@@ -65,12 +77,13 @@ class UserHistory extends React.Component {
 
         return (
             <div className='content'>
-                <h1>User History: {this.state.username}</h1>
+                <h1 style={{fontSize: '30px', textAlign: 'center'}}>User History: {this.state.username}</h1>
                 <br />
                 <ButtonToolbar style={{ float: 'left' }}>
                     <Button bsStyle='link' onClick={this.closeHistoryView}>Return to User Management</Button>
                 </ButtonToolbar>
                 <br/>
+                <div style={this.whiteBorderStyle()}>
                 <ReactCollapsingTable
                         rows = { rows }
                         columns = { columns }
@@ -78,6 +91,7 @@ class UserHistory extends React.Component {
                         direction = {'descending'}
                         showPagination={ true }
                 />
+                </div>
             </div>
         );
     }

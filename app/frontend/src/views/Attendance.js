@@ -49,11 +49,34 @@ class Attendance extends React.Component {
         }
     }
 
+borderStyle() {
+return {
+    background: '#f8f8f8',
+    margin: '5px',
+    borderRadius: 'inherit',
+    padding: '15px',
+    borderColor: '#e7e7e7',
+    borderStyle: 'solid',
+    borderWidth: 'thin'
+}
+}
+whiteBorderStyle() {
+    return {
+        background: 'white',
+        borderRadius: 'inherit',
+        padding: '10px',
+        borderColor: '#e7e7e7',
+        borderStyle: 'solid',
+        borderWidth: 'thin'
+    }
+    }
+
+
     getCurrentDate() {
         const today = new Date();
         const month = today.getMonth() + 1;
         const day = today.getDate();
-        return `${today.getFullYear()}-${month >= 10 ? month : `0${month}`}-${day >= 10 ? day : `0${day}`}`
+        return `${month >= 10 ? month : `0${month}`}-${day >= 10 ? day : `0${day}`}-${today.getFullYear()}`
     }
 
     async fetchAndBuild() {
@@ -339,14 +362,15 @@ class Attendance extends React.Component {
 
         let buttonToolbar;
         if (this.state.canCreateStudent) {
-            buttonToolbar = <ButtonToolbar style={{ float: 'right' }}>
+            buttonToolbar = <ButtonToolbar style={{ marginBottom: '2em'}}>
+                <Button onClick={this.openModal}>Create New Student
+                </Button>
                 <Button onClick={this.refresh}>Refresh</Button>
                 {!this.state.mobile && <Button onClick={this.setDateToToday}>Go To Today</Button>}
                 {!this.state.mobile && <Button onClick={this.downloadCSV} disabled={buildingCSV}>{buildingCSV ? 'Downloading...' : 'Download'}</Button>}
-                <Button onClick={this.openModal}>Create New Student</Button>
             </ButtonToolbar>
         } else {
-            buttonToolbar = <ButtonToolbar style={{ float: 'right' }}>
+            buttonToolbar = <ButtonToolbar style={{  marginBottom: '2em'}}>
                 <Button onClick={this.refresh}>Refresh</Button>
                 {!this.state.mobile && <Button onClick={this.setDateToToday}>Go To Today</Button>}
                 {!this.state.mobile && <Button onClick={this.downloadCSV} disabled={buildingCSV}>{buildingCSV ? 'Downloading...' : 'Download'}</Button>}
@@ -356,21 +380,53 @@ class Attendance extends React.Component {
         return (
             <div className='content'>
                 <AddStudentModal studentFields={this.state.studentFields} show={this.state.showStudentModal} onSubmit={this.closeModal}/>
-                <h1>Attendance for {this.state.date}</h1>
+                <div style={{textAlign: 'center'}}>
+                <h1
+                style={{fontSize: '25px'}}
+                >{this.state.date}</h1> 
+                <h1
+                style={{marginTop: '0px', fontSize: '30px'}}
+                >Attendance</h1>
+                </div>
                 <br/>
-                {buttonToolbar}
-                {!this.state.mobile && <Form inline style={{ float: 'right', paddingRight: '5px', paddingLeft: '5px'}}>
-                    <FormGroup>
+                <div style={{marginLeft:'10px'}} >
+                <Autocomplete
+                    
+                    label={'Check-in Student:'}
+					suggestions={this.state.suggestionsArray}
+					handler={this.addStudent}
+                />
+                </div>
+                
+                <div style={this.borderStyle()}>
+                {this.state.mobile?
+                    <div 
+                    >
+                    {<Form inline >
+                        <FormGroup >
+                            <ControlLabel>Date:</ControlLabel>{' '}
+                            <FormControl onChange={this.updateDate} value={this.state.date} type="date"/>
+                        </FormGroup>
+                    </Form>}
+                    </div>
+                    :
+                    
+                    <div 
+                style = {{float: 'right'}}>
+                {<Form inline >
+                    <FormGroup >
                         <ControlLabel>Date:</ControlLabel>{' '}
                         <FormControl onChange={this.updateDate} value={this.state.date} type="date"/>
                     </FormGroup>
                 </Form>}
-                <Autocomplete
-                    label={'Check-in Student:'}
-					suggestions={this.state.suggestionsArray}
-					handler={this.addStudent}
-				/>
-                <br/>
+                </div>
+                }
+                
+                <div>
+                {buttonToolbar}
+                </div>
+                <div
+                style={this.whiteBorderStyle()}>
                 <ReactCollapsingTable
                         rows = { rows }
                         columns = { columns }
@@ -379,6 +435,8 @@ class Attendance extends React.Component {
                         showPagination={ true }
                         callbacks = {{'options':this.removeAttendanceRow}}
                 />
+                </div>
+            </div>
             </div>
         )
     }

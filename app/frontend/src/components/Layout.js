@@ -41,6 +41,9 @@ class Layout extends Component {
     if (permissions.indexOf('view_reports') >= 0) {
       nav.push(<NavItem key={3} onClick={this.handleItemClick('reports')}>Reports</NavItem>)
     }
+    if ((permissions.indexOf('view_volunteers') >= 0) && (permissions.indexOf('view_volunteerattendanceitems') >= 0)){
+      nav.push(<NavItem key={4} onClick={this.handleItemClick('volunteers')}>Volunteers</NavItem>)
+    }
     const navItems = <Nav>{nav}</Nav>
     return (
       <div>

@@ -15,16 +15,12 @@ The major files and folders in `/backend/` are:
 * `/static/`: This contains static resources for the server when hosted on AWS.
 * `key_api_uwsgi.ini`: This contains the configuration for uWSGI on the AWS server.
 * `manage.py`: This is the python file that runs django from the command line.
-* `Pipfile`: This contains the configuration for pipenv
-* `Pipenv.lock`: This also contains configuration details for pipenv
 * `requirements.txt`: This contains configuration details for virtualenv
 * `uwsgi_params`: This contains some configuration details for nginx on the AWS server.
 
 ## Virtual Environments
 
-As Python doesn't have a built-in method for syncing installed packages across verion control, virtual environments provide this functionality. The tools previously used with this project and are known to be compatible are [pipenv](https://pypi.org/project/pipenv/) and [virtualenv](https://virtualenv.pypa.io/en/latest/), each of which keep track of local python versions and dependencies used in the project, albeit in different ways. Either work equally fine for running the project locally, although the server must use virtualenv given configuration details for uWSGI.
-
-To run pipenv, cd into `app/backend/` and run `pipenv shell` to run the terminal within the virtual environment. If you're running pipenv for the first time, you'll need to run `pipenv install` to update your local dependencies.
+As Python doesn't have a built-in method for syncing installed packages across verion control, virtual environments provide this functionality. The tools originally used with this project in 2019 and are known to be compatible are [pipenv](https://pypi.org/project/pipenv/) and [virtualenv](https://virtualenv.pypa.io/en/latest/), each of which keep track of local python versions and dependencies used in the project, albeit in different ways. Either work equally fine for running the project locally, although the server must use virtualenv given configuration details for uWSGI. The 2020 iteration only used virtualenv, so check the origiginal repository if you are looking for files related to pipenv.
 
 To run virtualenv, cd into `app/backend/` and running `source /env/bin/activate` on a unix machine or `"env/Scripts/activate"` on a windows machine to run the terminal within the virtual environment. If you're running virtualenv for the first time, run `virtualenv env` to initialize the virtual environment, then run `pip install -r requirements.txt` to install any packages you have yet to download.
 

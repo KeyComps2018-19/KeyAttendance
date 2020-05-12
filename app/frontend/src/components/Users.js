@@ -21,7 +21,8 @@ class Users extends React.Component {
             showingAllUsers: true,
             selectedUserHistory: [],
             selectedUsername: '',
-            historyView: false
+            historyView: false,
+            mobile: false,
         };
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
@@ -31,6 +32,17 @@ class Users extends React.Component {
         this.showAllUsers = this.showAllUsers.bind(this);
         this.getUserHistory = this.getUserHistory.bind(this);
         this.closeHistoryView = this.closeHistoryView.bind(this);
+    }
+
+    whiteBorderStyle() {
+        return {
+            background: 'white',
+            borderRadius: 'inherit',
+            padding: '10px',
+            borderColor: '#e7e7e7',
+            borderStyle: 'solid',
+            borderWidth: 'thin',
+        }
     }
 
     async componentDidMount() {
@@ -49,7 +61,8 @@ class Users extends React.Component {
                 users: users,
                 role_ids: role_ids, 
                 role_names: role_names,
-                suggestionsArray: suggestionsArray
+                suggestionsArray: suggestionsArray,
+                mobile: (window.innerWidth < 768)
             });
         } catch (e) {
             console.log(e);
@@ -339,6 +352,34 @@ class Users extends React.Component {
                 sortable: false,
             }
         ];
+        const mobileColumns = [
+            {
+                accessor: 'username',
+                label: 'Username',
+                priorityLevel: 2,
+                position: 2,
+                minWidth: 100,
+                sortable: true
+            },
+            {
+                accessor: 'roles',
+                label: 'User Roles',
+                priorityLevel: 4,
+                position: 4,
+                sortable: true,
+                minWidth: 30
+            },
+            { 
+                accessor: 'edit',
+                label: '',
+                priorityLevel: 6,
+                position: 6,
+                CustomComponent: EditUserButton,
+                minWidth: 50,
+                sortable: false, 
+            },
+        ];
+
         const tableCallbacks = { edit: this.updateRow, history: this.getUserHistory }
         if (this.state.historyView) {
             return (
@@ -350,7 +391,9 @@ class Users extends React.Component {
         if (permissions.indexOf('add_user') >= 0) {
             buttonToolbar = <ButtonToolbar style={{ float: 'right' }}>
                 <Button className={this.state.showingAllUsers ? 'hidden' : ''} bsStyle='link' onClick={this.showAllUsers}>Show All Users</Button>
-                <Button onClick={this.openModal}>New User</Button>
+                
+                {!this.state.mobile && <Button onClick={this.openModal}>New User</Button>}
+                {this.state.mobile && <Button style={{marginTop: '25px'}} onClick={this.openModal}>New User</Button>}
             </ButtonToolbar>
         } else {
             buttonToolbar = <ButtonToolbar style={{ float: 'right' }}>
@@ -358,12 +401,15 @@ class Users extends React.Component {
             </ButtonToolbar>
         }
         return (
-            <div className='content'>
+            <div className='content' >
                 <AddUserModal role_ids={this.state.role_ids}
                     show={this.state.showUserModal}
                     onSubmit={this.closeModal} />
-                <h1>User Management</h1>
+                <h1
+                style={{textAlign: 'center', fontSize: '25px'}}
+                >User Management</h1>
                 <br />
+                <div style = {{margin: '10px'}}>
                 {buttonToolbar}
                 <Autocomplete
                     hasUsername={true}
@@ -371,14 +417,28 @@ class Users extends React.Component {
                     handler={this.handler}
                 />
                 <br/>
+                <div
+                style = {this.whiteBorderStyle()}>
+                {!this.state.mobile &&
+                    <ReactCollapsingTable
+                    rows = { rows }
+                    columns = { columns }
+                    column = {'username'}
+                    direction = {'descending'}
+                    showPagination={ true }
+                    callbacks={ tableCallbacks }
+            />}
+            {this.state.mobile &&
                 <ReactCollapsingTable
-                        rows = { rows }
-                        columns = { columns }
-                        column = {'username'}
-                        direction = {'descending'}
-                        showPagination={ true }
-                        callbacks={ tableCallbacks }
-                />
+                rows = { rows }
+                columns = { mobileColumns }
+                column = {'username'}
+                direction = {'descending'}
+                showPagination={ true }
+                callbacks={ tableCallbacks }
+        />}
+        </div>
+            </div>
             </div>
         );
     }

@@ -26,6 +26,17 @@ class StudentKeys extends React.Component {
         this.processCSV = this.processCSV.bind(this);
     }
 
+    whiteBorderStyle() {
+        return {
+            background: 'white',
+            borderRadius: 'inherit',
+            padding: '10px',
+            borderColor: '#e7e7e7',
+            borderStyle: 'solid',
+            borderWidth: 'thin',
+        }
+    }
+
     async componentDidMount() {
         try {
             const unmatchedStudents = await httpGet(`${protocol}://${domain}/api/suggestions/unmatchedstudents/`);
@@ -179,20 +190,24 @@ class StudentKeys extends React.Component {
 
         return (
             <div className="content">
-                <h1>Students Without Student Keys</h1>
+                <h1
+                style={{textAlign: 'center', fontSize: '25px'}}
+                >Student Key Assignment</h1>
                 <AssignStudentKeyModal show={this.state.showModal} studentID={this.state.focusedStudent} citySpanStudents={this.state.citySpanStudents} onClose={this.closeModal}/>
                 <br/>
-                <div style={{display: 'inline-block'}}>
+                <div style={{display: 'inline-block', marginBottom: '10px'}}>
                     <Autocomplete
                         suggestions={this.state.suggestions}
                         handler={this.handleSearch}
                     />
                 </div>
+                <div style={this.whiteBorderStyle()}>
                 <div style={{float: 'right'}}>
-                    <FileUploader extension=".csv" label="Upload Cityspan Student CSV:" upload={this.handleCSVUpload}/>
+                <FileUploader extension=".csv" label="Upload Cityspan Student CSV:" upload={this.handleCSVUpload}/>
                 </div>
                 <LinkTable data={rows} headers={['name', 'action']} onSelect={(data) => this.handleRowClick(data.id)}/>
-            </div>
+                </div>
+                </div>
         );
     }
 }

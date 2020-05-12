@@ -12,7 +12,8 @@ class Activities extends React.Component {
         super(props);
         this.state = {
             activities: [],
-            showModal: false
+            showModal: false,
+            mobile: false,
         };
 
         this.patchActivityOrder = this.patchActivityOrder.bind(this);
@@ -29,7 +30,8 @@ class Activities extends React.Component {
         try {
             const activities = await httpGet(`${protocol}://${domain}/api/activities/`);
             this.setState({
-                activities
+                activities,
+                mobile: (window.innerWidth < 768)
             });
         } catch (e) {
             console.log(e);
@@ -189,24 +191,54 @@ class Activities extends React.Component {
                 sortable: false, 
             }
         ];
+        const mobileColumns = [
+            {
+                accessor: 'name',
+                label: 'Activity',
+                priorityLevel: 1,
+                position: 1,
+                minWidth: 100,
+                sortable: false
+            },
+            {
+                accessor: 'is_showing',
+                label: 'Currently in Use',
+                priorityLevel: 3,
+                position: 3,
+                CustomComponent: ShowActivityCheckbox,
+                minWidth: 50,
+                sortable: false
+            },
+        ];
         const tableCallbacks = { up: this.swapOrder, down: this.swapOrder, is_showing: this.updateCheckbox }
         return (
             <div className="content">
-                <h1>Programming</h1>
-                <ButtonToolbar style={{ float: 'right'}}>
+                <h1
+                style={{textAlign: 'center', fontSize: '25px'}}
+                >Programming</h1>
+                <br />
+                <ButtonToolbar style={{ marginBottom: '10px'}}>
                     <Button onClick={this.openModal}>New Activity</Button>
                 </ButtonToolbar>
                 <AddActivityModal show={this.state.showModal}
                     lastOrdering={this.state.activities.length}
                     onSubmit={this.closeModal} />
-                <ReactCollapsingTable
+                {!this.state.mobile && <ReactCollapsingTable
                         rows = { rows }
                         columns = { columns }
                         column = {'name'}
                         direction = {'descending'}
                         showPagination={ true }
                         callbacks = { tableCallbacks }
-                />
+                />}
+                {this.state.mobile && <ReactCollapsingTable
+                    rows = { rows }
+                    columns = { mobileColumns }
+                    column = {'name'}
+                    direction = {'descending'}
+                    showPagination={ true }
+                    callbacks = { tableCallbacks }
+            />}
             </div>
         );
     }

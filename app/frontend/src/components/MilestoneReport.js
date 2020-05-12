@@ -69,10 +69,13 @@ class MilestoneReport extends React.Component {
 
 		return (
 			<div>
-				<h3> Download Attendance Milestones </h3>
+				<h3
+				style={{textAlign: 'center', fontSize: '25px'}}
+				>Attendance Milestones </h3>
+				<div style={{margin: '20px'}}>
 				<p>Downloads a spreadsheet containing a list of students who reached a given attendance milestone between two dates.</p>
 				<p>For instance, if the milestone was set to 30, the spreadsheet would list the students to attended the Key for their 30th time between two given dates</p>
-                <Form inline style={{paddingRight: '5px', paddingLeft: '5px'}}>
+                <Form style={{paddingRight: '5px', paddingLeft: '5px'}}>
                   <FormGroup>
 										<ControlLabel>Milestone:</ControlLabel>{' '}
                     <FormControl onChange={this.updateMilestone} value={this.state.milestone} type="number"/>{'  '}
@@ -80,9 +83,10 @@ class MilestoneReport extends React.Component {
                     <FormControl onChange={this.updateStartDate} value={this.state.startDate} type="date"/>{'  '}
                     <ControlLabel>End Date:</ControlLabel>{' '}
                     <FormControl onChange={this.updateEndDate} value={this.state.endDate} type="date"/>{'  '}
-                    <Button onClick={this.downloadCSV} disabled={buildingCSV}>{buildingCSV ? 'Downloading...' : 'Download'}</Button>
+                    <Button style={{marginTop: '10px'}} onClick={this.downloadCSV} disabled={buildingCSV}>{buildingCSV ? 'Downloading...' : 'Download'}</Button>
                   </FormGroup>
                 </Form>
+			</div>
 			</div>
 		);
 	}

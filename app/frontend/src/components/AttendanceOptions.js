@@ -55,7 +55,10 @@ class AttendanceOptions extends React.Component {
 
     render() {
         return(
-            <Button bsStyle="danger" onClick={this.deleteRow}>Delete</Button>
+            <Button 
+                bsStyle="danger" 
+                onClick={(e) => { if (window.confirm('Are you sure you wish to delete this student?')) this.deleteRow(e)}}>Delete
+            </Button>
         )
     }
 }

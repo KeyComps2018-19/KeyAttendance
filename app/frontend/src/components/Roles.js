@@ -20,6 +20,17 @@ class Roles extends React.Component {
         this.deleteRole = this.deleteRole.bind(this);
     }
 
+    whiteBorderStyle() {
+        return {
+            background: 'white',
+            borderRadius: 'inherit',
+            padding: '10px',
+            borderColor: '#e7e7e7',
+            borderStyle: 'solid',
+            borderWidth: 'thin',
+        }
+    }
+
     async componentDidMount() {
         try {
             const roles = await httpGet(`${protocol}://${domain}/api/groups/`);
@@ -98,13 +109,18 @@ class Roles extends React.Component {
         const tableCallbacks = { edit: this.deleteRole }
         return (
             <div className="content">
-                <h1>User Roles</h1>
-                <ButtonToolbar style={{ float: 'right' }}>
+                <h1
+                style={{textAlign: 'center', fontSize: '25px'}}
+                >User Roles</h1>
+                <br />
+                <ButtonToolbar style={{ marginBottom: '10px' }}>
                     <Button onClick={this.openModal}>New User Role</Button>
                 </ButtonToolbar>
                 <AddRoleModal permission_ids={this.state.permission_ids}
                     show={this.state.showModal}
                     onSubmit={this.closeModal} />
+                    <div
+                style = {this.whiteBorderStyle()}>
                 <ReactCollapsingTable
                         rows = { rows }
                         columns = { columns }
@@ -113,6 +129,7 @@ class Roles extends React.Component {
                         showPagination={ true }
                         callbacks = { tableCallbacks }
                 />
+                </div>
             </div>
         );
     }

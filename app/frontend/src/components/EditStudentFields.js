@@ -20,6 +20,16 @@ class EditStudentFields extends React.Component {
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
     }
+    whiteBorderStyle() {
+        return {
+            background: 'white',
+            borderRadius: 'inherit',
+            padding: '10px',
+            borderColor: '#e7e7e7',
+            borderStyle: 'solid',
+            borderWidth: 'thin',
+        }
+    }
 
     async componentDidMount() {
         try {
@@ -113,18 +123,10 @@ class EditStudentFields extends React.Component {
                 sortable: false
             },
             {
-                accessor: 'type_name',
-                label: 'Data Type',
-                priorityLevel: 2,
-                position: 2,
-                minWidth: 100,
-                sortable: false
-            },
-            {
                 accessor: 'is_showing',
                 label: 'Currently in Use',
-                priorityLevel: 3,
-                position: 3,
+                priorityLevel: 2,
+                position: 2,
                 CustomComponent: StudentFieldCheckbox,
                 minWidth: 50,
                 sortable: false
@@ -132,8 +134,8 @@ class EditStudentFields extends React.Component {
             {
                 accessor: 'quick_add',
                 label: 'Show in Quick Add',
-                priorityLevel: 4,
-                position: 4,
+                priorityLevel: 3,
+                position: 3,
                 CustomComponent: StudentFieldCheckbox,
                 minWidth: 50,
                 sortable: false
@@ -142,15 +144,19 @@ class EditStudentFields extends React.Component {
         const tableCallbacks = { is_showing: this.updateCheckbox, quick_add: this.updateCheckbox }
         return (
             <div className="content">
-                <h1>Student Profile Fields</h1>
-                <ButtonToolbar style={{ float: 'right'}}>
+                <h1
+                style={{textAlign: 'center', fontSize: '25px'}}
+                >Student Profile Fields</h1>
+                <br />
+                <ButtonToolbar style={{ marginBottom: '10px'}}>
                     <Button onClick={this.openModal}>New Student Profile Field</Button>
                 </ButtonToolbar>
                 <AddStudentFieldModal show={this.state.showModal}
                     onSubmit={this.closeModal} />
-                <br/>
-                <br/>
-                <br/>
+
+                <div 
+                style = {this.whiteBorderStyle()}
+                >
                 <ReactCollapsingTable
                         rows = { rows }
                         columns = { columns }
@@ -159,6 +165,7 @@ class EditStudentFields extends React.Component {
                         showPagination={ true }
                         callbacks = { tableCallbacks }
                 />
+                </div>
             </div>
         );
     }
